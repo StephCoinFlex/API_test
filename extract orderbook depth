@@ -1,0 +1,55 @@
+import websockets
+import asyncio
+import time
+import hmac
+import base64
+import hashlib
+import json
+
+api_key = 
+api_secret =
+
+orderbook_depth = \
+{
+  "op": "subscribe",
+  "tag": 103,
+  "args": ["depth:FLEX-USD-SWAP-LIN"]
+}
+
+orderbook2_depth = \
+{
+  "op": "subscribe",
+  "tag": 103,
+  "args": ["depth:FLEX-USD"]
+}
+
+
+url= 'wss://v2api.coinflex.com/v2/websocket'
+
+async def subscribe():
+    async with websockets.connect(url) as ws:
+        while True:
+            if not ws.open:
+                print("websocket disconnected")
+                ws = await websockets.connect(url)
+            response = await ws.recv()
+            data = json.loads(response)
+            print(data)
+           # if data['data'][0]['instrumentId']:
+            #    print(data['data'][0]['ask'][0][0])
+
+
+            if 'nonce' in data:
+                await ws.send(json.dumps(orderbook_depth))
+                await ws.send(json.dumps(orderbook2_depth))
+         #   elif data['success']==True and datae[..]...:
+
+         #   elif not ...
+
+
+
+
+            # elif 'success' in data and data['success'] == 'True':
+                # if data['table'] == 'futures/depth':
+                    # await ws.send(json.dumps(orderbook2_depth))
+asyncio.get_event_loop().run_until_complete(subscribe())
